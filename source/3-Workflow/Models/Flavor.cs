@@ -1,4 +1,4 @@
-namespace FroyoFoundry.AIAgent.Models;
+namespace FroyoFoundry.Workflow.Models;
 
 /// <summary>
 /// Represents a frozen yogurt flavor offered by Froyo Foundry.

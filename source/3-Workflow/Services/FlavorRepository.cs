@@ -1,6 +1,6 @@
-using FroyoFoundry.AIAgent.Models;
+using FroyoFoundry.Workflow.Models;
 
-namespace FroyoFoundry.AIAgent.Services;
+namespace FroyoFoundry.Workflow.Services;
 
 /// <summary>
 /// Central repository for managing frozen yogurt flavor data.
