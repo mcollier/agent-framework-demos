@@ -1,7 +1,7 @@
-﻿using Azure.AI.OpenAI;
-using Azure.Identity;
+﻿using Azure;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.Configuration;
+using OpenAI;
 using OpenAI.Chat;
 
 var config = new ConfigurationBuilder()
@@ -10,10 +10,10 @@ var config = new ConfigurationBuilder()
     .AddEnvironmentVariables()
     .Build();
 
-// Read Azure OpenAI configuration
-var endpoint = config["AzureOpenAI:Endpoint"]
-    ?? throw new InvalidOperationException("AzureOpenAI:Endpoint is not configured.");
-var deploymentName = config["AzureOpenAI:DeploymentName"] ?? "gpt-4o-mini";
+// Read OpenAI configuration
+var endpoint = config["OpenAI:Endpoint"]
+    ?? "https://models.github.ai/inference";
+var deploymentName = config["OpenAI:DeploymentName"] ?? "openai/gpt-5-chat";
 
 string instructions = """
 You're a frozen yogurt (froyo) recommendation agent for Froyo Foundry, perveyors of the finest frozen yogurt the world, catering the to tastes of
@@ -34,10 +34,13 @@ Your available flavors include:
 - AIçaí Bowl
 """;
 
-// Create the agent configuration
-AIAgent agent = new AzureOpenAIClient(
-    endpoint: new Uri(endpoint),
-    credential: new AzureCliCredential())
+string githubkey = config["OpenAI:Key"] ?? throw new InvalidOperationException("OpenAI:Key is not configured.");
+
+// Create the agent configuration using OpenAI provider and GitHub models
+//  (this is just for demonstration; in a real scenario, you'd use Azure OpenAI or another provider)
+AIAgent agent = new OpenAIClient(
+                    credential: new AzureKeyCredential(githubkey),
+                    options: new OpenAIClientOptions{ Endpoint = new Uri(endpoint) })
     .GetChatClient(deploymentName)
     .AsAIAgent(instructions: instructions, name: "FroyoRecommender");
 
