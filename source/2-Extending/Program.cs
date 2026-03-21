@@ -4,7 +4,6 @@ using FroyoFoundry.AIAgent.Tools;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
-using OpenAI.Chat;
 
 var config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false)
@@ -29,6 +28,7 @@ AIAgent agent = new AzureOpenAIClient(
     endpoint: new Uri(endpoint),
     credential: new AzureCliCredential())
     .GetChatClient(deploymentName)
+    .AsIChatClient()
     .AsAIAgent(
         instructions: instructions,
         name: "FroyoRecommender",
@@ -38,13 +38,21 @@ AIAgent agent = new AzureOpenAIClient(
         ]);
 
 
+// Add middleware to filter out forbidden words from both input and output.  This is just a simple example
+// of how you can intercept and modify the messages going to and from the agent.
+var agentWithMiddleware = agent
+    .AsBuilder()
+    .Use(runFunc: GuardMiddleware, runStreamingFunc: null)  // Using the non-streaming for handling streaming as well
+    .Build();
+
+
 // Invoke the agent
 // Console.WriteLine(await agent.RunAsync("I'm alergic to peanuts. What do you recommend?"));
 
 // Invoke with streaming
 
 // Create a session to maintain context across interactions
-AgentSession session = await agent.CreateSessionAsync();
+AgentSession session = await agentWithMiddleware.CreateSessionAsync();
 
 Console.WriteLine("Ask FroyoRecommender anything. Type 'exit' or press Enter on an empty line to quit.\n");
 
@@ -57,9 +65,52 @@ while (true)
         break;
 
     Console.Write("FroyoRecommender: ");
-    await foreach (var chunk in agent.RunStreamingAsync(input, session))
+    await foreach (var chunk in agentWithMiddleware.RunStreamingAsync(input, session))
     {
         Console.Write(chunk);
     }
     Console.WriteLine("\n");
+}
+
+
+async Task<AgentResponse> GuardMiddleware(IEnumerable<ChatMessage> messages, AgentSession? session, AgentRunOptions? options, AIAgent innerAgent, CancellationToken cancellationToken)
+{
+    // Remove certain words from the user input as a simple guard example.  If the prompt contains any of the forbidden words, we can return a custom response instead of invoking the inner agent.
+    var forbiddenWords = new[] { "badword1", "badword2" };
+    
+    Console.WriteLine("GuardMiddleware: Checking for forbidden words...");
+
+    var filteredMessages = FilteredMessages(messages, forbiddenWords);
+
+    Console.WriteLine("GuardMiddleware: Filtered messages:");
+    foreach (var msg in filteredMessages)    {
+        Console.WriteLine($"- {msg.Role}: {msg.Text}");
+    }
+
+    // Proceed with the inner agent run
+    var response = await innerAgent.RunAsync(filteredMessages, session, options, cancellationToken);
+
+    // Check the output
+    response.Messages = FilteredMessages(response.Messages, forbiddenWords);
+
+    return response;
+
+    List<ChatMessage> FilteredMessages(IEnumerable<ChatMessage> messages, string[] forbiddenWords)
+    {
+        return messages.Select(m => new ChatMessage(m.Role, FilterContent(m.Text, forbiddenWords))).ToList();
+    }
+
+    static string FilterContent(string content, string[] forbiddenWords)
+    {
+        foreach (var keyword in forbiddenWords)
+        {
+            if (content.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+            {
+                return "[REDACTED]: Forbidden content removed.";
+            }
+        }
+
+        return content;
+    }
+
 }

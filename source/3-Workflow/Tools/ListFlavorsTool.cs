@@ -1,8 +1,8 @@
 using System.ComponentModel;
 using System.Text.Json;
-using FroyoFoundry.AIAgent.Services;
+using FroyoFoundry.Workflow.Services;
 
-namespace FroyoFoundry.AIAgent.Tools;
+namespace FroyoFoundry.Workflow.Tools;
 
 /// <summary>
 /// Lists all available frozen yogurt flavors for the AI agent.
