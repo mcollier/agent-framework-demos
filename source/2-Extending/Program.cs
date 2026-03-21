@@ -40,9 +40,9 @@ AIAgent agent = new AzureOpenAIClient(
 
 // Add middleware to filter out forbidden words from both input and output.  This is just a simple example
 // of how you can intercept and modify the messages going to and from the agent.
-var agentWithMiddlware = agent
+var agentWithMiddleware = agent
     .AsBuilder()
-    .Use(runFunc: GuardMiddleware, runStreamingFunc: null)
+    .Use(runFunc: GuardMiddleware, runStreamingFunc: null)  // Using the non-streaming for handling streaming as well
     .Build();
 
 
@@ -52,7 +52,7 @@ var agentWithMiddlware = agent
 // Invoke with streaming
 
 // Create a session to maintain context across interactions
-AgentSession session = await agentWithMiddlware.CreateSessionAsync();
+AgentSession session = await agentWithMiddleware.CreateSessionAsync();
 
 Console.WriteLine("Ask FroyoRecommender anything. Type 'exit' or press Enter on an empty line to quit.\n");
 
@@ -65,7 +65,7 @@ while (true)
         break;
 
     Console.Write("FroyoRecommender: ");
-    await foreach (var chunk in agentWithMiddlware.RunStreamingAsync(input, session))
+    await foreach (var chunk in agentWithMiddleware.RunStreamingAsync(input, session))
     {
         Console.Write(chunk);
     }
