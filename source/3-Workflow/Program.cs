@@ -257,7 +257,7 @@ AIAgent customerMessagingAgent = new AzureOpenAIClient(
             {
                 Instructions = customerMessagingInstructions,
                 ResponseFormat = ChatResponseFormat.ForJsonSchema<CustomerMessageResult>(
-                    schemaDescription: "The result of analyzing an order's fulfillment status, including inventory details, fulfillment capability, coupon generation decision, and alternative product recommendations.",
+                    schemaDescription: "Customer-facing message payload containing the order ID and a clear, empathetic message explaining the order's fulfillment status.",
                     schemaName: "CustomerMessageResult")
             }
         });
