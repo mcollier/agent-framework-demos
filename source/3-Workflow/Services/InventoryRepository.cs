@@ -36,7 +36,7 @@ public static class InventoryRepository
     {
         ArgumentNullException.ThrowIfNull(sku);
 
-        return Inventory.TryGetValue(sku.ToUpperInvariant(), out int qty) ? qty : 0;
+        return Inventory.TryGetValue(sku.Trim(), out int qty) ? qty : 0;
     }
 
     /// <summary>
