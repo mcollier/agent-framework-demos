@@ -56,7 +56,7 @@ string orderIntakeInstructions = """
 
     - Maximum quantity per item is 10.
     - Minimum quantity per item is 1.
-    - Restricted products include "Rainbow Sherbet" and "Chocolate Chip Cookie Dough".
+    - Restricted products include "Cloud Caramel Cache" and "Mint Condition".
     - Orders must include the name or flavor ID of the product and how many of each item.
 
     ## Output Requirements
@@ -263,7 +263,12 @@ AIAgent customerMessagingAgent = new AzureOpenAIClient(
         });
 
 
-// Create the workflow (as an agent?)
+// Run as a workflow
+// var workflow = new WorkflowBuilder(orderIntakeAgent)
+//     .AddEdge(orderIntakeAgent, fulfillmentAgent)
+//     .AddEdge(fulfillmentAgent, customerMessagingAgent)
+//     .Build();
+
 
 // var workflow = AgentWorkflowBuilder.BuildSequential(
 //     [
@@ -272,11 +277,6 @@ AIAgent customerMessagingAgent = new AzureOpenAIClient(
 //         customerMessagingAgent
 //     ]);
 
-// Run as a workflow
-// var workflow = new WorkflowBuilder(orderIntakeAgent)
-//     .AddEdge(orderIntakeAgent, fulfillmentAgent)
-//     .AddEdge(fulfillmentAgent, customerMessagingAgent)
-//     .Build();
 
 // Run the workflow as an agent.
 var workflowAgent = new WorkflowBuilder(orderIntakeAgent)
@@ -301,8 +301,6 @@ var input = Console.ReadLine();
 var workflowResult = await workflowAgent.RunAsync(new ChatMessage(ChatRole.User, input));
 foreach (ChatMessage msg in workflowResult.Messages)
 {
-    Console.WriteLine($"{msg.Role}: {msg.Contents}");
-
     if (msg.AuthorName == "CustomerMessagingAgent")
     {
         if (msg.Contents is not null)
