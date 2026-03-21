@@ -294,6 +294,11 @@ Console.WriteLine("Please enter your Froyo Foundry order.");
 
 var input = Console.ReadLine();
 
+if (string.IsNullOrWhiteSpace(input))
+{
+    Console.WriteLine("No order was entered. Exiting.");
+    return;
+}
 // workflow
 // await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, new ChatMessage(ChatRole.User, input));
 
