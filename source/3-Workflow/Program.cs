@@ -4,6 +4,7 @@ using FroyoFoundry.Workflow.Models;
 using FroyoFoundry.Workflow.Tools;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
+using Microsoft.Agents.AI.Workflows.Checkpointing;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 
@@ -264,10 +265,10 @@ AIAgent customerMessagingAgent = new AzureOpenAIClient(
 
 
 // Run as a workflow
-// var workflow = new WorkflowBuilder(orderIntakeAgent)
-//     .AddEdge(orderIntakeAgent, fulfillmentAgent)
-//     .AddEdge(fulfillmentAgent, customerMessagingAgent)
-//     .Build();
+var workflow = new WorkflowBuilder(orderIntakeAgent)
+    .AddEdge(orderIntakeAgent, fulfillmentAgent)
+    .AddEdge(fulfillmentAgent, customerMessagingAgent)
+    .Build();
 
 
 // var workflow = AgentWorkflowBuilder.BuildSequential(
@@ -278,11 +279,13 @@ AIAgent customerMessagingAgent = new AzureOpenAIClient(
 //     ]);
 
 
+CheckpointManager checkpointManager = CheckpointManager.CreateJson(new FileSystemJsonCheckpointStore(new DirectoryInfo("./checkpointstore")));
+
 // Run the workflow as an agent.
-var workflowAgent = new WorkflowBuilder(orderIntakeAgent)
-    .AddEdge(orderIntakeAgent, fulfillmentAgent)
-    .AddEdge(fulfillmentAgent, customerMessagingAgent)
-    .Build().AsAIAgent();
+// var workflowAgent = new WorkflowBuilder(orderIntakeAgent)
+//     .AddEdge(orderIntakeAgent, fulfillmentAgent)
+//     .AddEdge(fulfillmentAgent, customerMessagingAgent)
+//     .Build().AsAIAgent();
 
 
 // Invoke with streaming
@@ -299,50 +302,54 @@ if (string.IsNullOrWhiteSpace(input))
     Console.WriteLine("No order was entered. Exiting.");
     return;
 }
+
 // workflow
-// await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow, new ChatMessage(ChatRole.User, input));
+await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workflow,
+    new ChatMessage(ChatRole.User, input),
+    checkpointManager: checkpointManager);
+
 
 // workflow as agent
-var workflowResult = await workflowAgent.RunAsync(new ChatMessage(ChatRole.User, input));
-foreach (ChatMessage msg in workflowResult.Messages)
-{
-    if (msg.AuthorName == "CustomerMessagingAgent")
-    {
-        if (msg.Contents is not null)
-        {
-            foreach (AIContent content in msg.Contents)
-            {
-                if (content is TextContent { Text: { Length: > 0 } text })
-                {
-                    Console.WriteLine($"Customer Message:\n{text}");
-                }
-            }
-        }
-    }
-}
+// var workflowResult = await workflowAgent.RunAsync(new ChatMessage(ChatRole.User, input));
+// foreach (ChatMessage msg in workflowResult.Messages)
+// {
+//     if (msg.AuthorName == "CustomerMessagingAgent")
+//     {
+//         if (msg.Contents is not null)
+//         {
+//             foreach (AIContent content in msg.Contents)
+//             {
+//                 if (content is TextContent { Text: { Length: > 0 } text })
+//                 {
+//                     Console.WriteLine($"Customer Message:\n{text}");
+//                 }
+//             }
+//         }
+//     }
+// }
 
 
 // Must send the turn token to trigger the agents.
 // The agents are wrapped as executors. When they receive messages,
 // they will cache the messages and only start processing when they receive a TurnToken.
-// await run.TrySendMessageAsync(new TurnToken(emitEvents: true));
+await run.TrySendMessageAsync(new TurnToken(emitEvents: true));
 
-// string? lastExecutorId = null;
-// List<ChatMessage> result = [];
-// await foreach (WorkflowEvent evt in run.WatchStreamAsync())
-// {
-//     if (evt is AgentResponseUpdateEvent e)
-//     {
-//         if (e.ExecutorId != lastExecutorId)
-//         {
-//             lastExecutorId = e.ExecutorId;
-//             Console.WriteLine();
-//             Console.Write($"{e.ExecutorId}: ");
-//         }
+string? lastExecutorId = null;
+List<ChatMessage> result = [];
+await foreach (WorkflowEvent evt in run.WatchStreamAsync())
+{
+    if (evt is AgentResponseUpdateEvent e)
+    {
+        if (e.ExecutorId != lastExecutorId)
+        {
+            lastExecutorId = e.ExecutorId;
+            Console.WriteLine();
+            Console.Write($"{e.ExecutorId}: ");
+        }
 
-//         Console.Write(e.Update.Text);
-//     }
-// }
+        Console.Write(e.Update.Text);
+    }
+}
 
 // Display final result
 Console.WriteLine();
