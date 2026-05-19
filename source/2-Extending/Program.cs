@@ -76,7 +76,7 @@ while (true)
 async Task<AgentResponse> GuardMiddleware(IEnumerable<ChatMessage> messages, AgentSession? session, AgentRunOptions? options, AIAgent innerAgent, CancellationToken cancellationToken)
 {
     // Remove certain words from the user input as a simple guard example.  If the prompt contains any of the forbidden words, we can return a custom response instead of invoking the inner agent.
-    var forbiddenWords = new[] { "badword1", "badword2" };
+    var forbiddenWords = new[] { "Michigan", "Wolverine" };
     
     Console.WriteLine("GuardMiddleware: Checking for forbidden words...");
 
