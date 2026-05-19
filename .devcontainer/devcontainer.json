@@ -20,7 +20,8 @@
         }
     },
     "containerEnv": {
-        "DOTNET_ENVIRONMENT": "Development"
+        "DOTNET_ENVIRONMENT": "Development",
+        "SSL_CERT_DIR": "/home/vscode/.aspnet/dev-certs/trust:/usr/lib/ssl/certs"
     },
     "customizations": {
         "vscode": {
