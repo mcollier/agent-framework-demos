@@ -20,8 +20,7 @@ ENTER to stop
 ### Extensions / Additional Functionality
 
 - Tool calling - ListFlavorsTool
-- Middleware - GuardMiddleware to filter for "bad words"
-
+- Middleware - GuardMiddleware to filter for specific terms
 What flavors do you have?
 
 Do any contain peanuts?
