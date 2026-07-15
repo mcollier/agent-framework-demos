@@ -34,7 +34,7 @@ I love a bowl of Midnight Wolverine
 - Order Intake Agent
   - Validate against some business rules
   - JSON response (structured output)
-- Fullfilment Decision Agent
+- Fulfillment Decision Agent
   - Determine if an order can be fullfilled based on inventory levels, and provide a recommendation from available products.
   - JSON response (structured output)
 - Customer Messaging Agent
