@@ -3,7 +3,6 @@ using Azure.Identity;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
-using OpenAI.Chat;
 
 var config = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: false)
