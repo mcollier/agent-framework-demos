@@ -54,7 +54,7 @@ var agentWithMiddleware = agent
 // Create a session to maintain context across interactions
 AgentSession session = await agentWithMiddleware.CreateSessionAsync();
 
-Console.WriteLine("Ask FroyoRecommender anything. Type 'exit' or press Enter on an empty line to quit.\n");
+Console.WriteLine("Ask Froyo Recommender anything. Type 'exit' or press Enter on an empty line to quit.\n");
 
 while (true)
 {
@@ -64,7 +64,7 @@ while (true)
     if (string.IsNullOrWhiteSpace(input) || input.Equals("exit", StringComparison.OrdinalIgnoreCase) || input.Equals("quit", StringComparison.OrdinalIgnoreCase))
         break;
 
-    Console.Write("FroyoRecommender: ");
+    Console.Write("Froyo Recommender: ");
     await foreach (var chunk in agentWithMiddleware.RunStreamingAsync(input, session))
     {
         Console.Write(chunk);
@@ -76,7 +76,7 @@ while (true)
 async Task<AgentResponse> GuardMiddleware(IEnumerable<ChatMessage> messages, AgentSession? session, AgentRunOptions? options, AIAgent innerAgent, CancellationToken cancellationToken)
 {
     // Remove certain words from the user input as a simple guard example.  If the prompt contains any of the forbidden words, we can return a custom response instead of invoking the inner agent.
-    var forbiddenWords = new[] { "badword1", "badword2" };
+    var forbiddenWords = new[] { "Indiana", "Hoosiers" };
     
     Console.WriteLine("GuardMiddleware: Checking for forbidden words...");
 

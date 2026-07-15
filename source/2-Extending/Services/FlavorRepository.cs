@@ -27,7 +27,7 @@ public static class FlavorRepository
     [
         new() { FlavorId = "MNC", Name = "Mint Condition", Category = "Classic", ContainsDairy = true, ContainsNuts = false, Description = "Cool mint with dark chocolate chips. Zero bugs detected." },
         new() { FlavorId = "BBC", Name = "Berry Blockchain Blast", Category = "Fruit", ContainsDairy = true, ContainsNuts = false, Description = "Strawberry + raspberry layered immutably for distributed sweetness." },
-        new() { FlavorId = "CCN", Name = "Cookie Container", Category = "Dessert", ContainsDairy = true, ContainsNuts = false, Description = "Chocolate cookie crumble isolated in its own delicious container." },
+        new() { FlavorId = "CCN", Name = "Cookie Container", Category = "Dessert", ContainsDairy = true, ContainsNuts = true, Description = "Chocolate cookie crumble isolated in its own delicious container." },
         new() { FlavorId = "RRS", Name = "Recursive Raspberry", Category = "Fruit", ContainsDairy = false, ContainsNuts = false, Description = "Raspberry that calls itself again. And again. And again." },
         new() { FlavorId = "VNE", Name = "Vanilla Exception", Category = "Classic", ContainsDairy = true, ContainsNuts = false, Description = "Simple. Predictable. Until it isn't." },
         new() { FlavorId = "NPP", Name = "Null Pointer Pistachio", Category = "Nutty", ContainsDairy = true, ContainsNuts = true, Description = "Rich pistachio with zero reference errors." },
