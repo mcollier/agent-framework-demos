@@ -1,10 +1,8 @@
-﻿using Azure;
-using Azure.AI.OpenAI;
+﻿using Azure.AI.OpenAI;
 using Azure.Identity;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
-using OpenAI;
 using OpenAI.Chat;
 
 var config = new ConfigurationBuilder()
@@ -32,23 +30,6 @@ Your available flavors include:
 - AIçaí Bowl
 """;
 
-// Use GitHub Models for development if available, but fall back to Azure OpenAI if not. 
-// This allows us to develop without needing Azure OpenAI credentials, and also provides a more cost effective way to develop and test our agent.
-// Read OpenAI configuration
-// var endpoint = config["OpenAI:Endpoint"]
-//     ?? "https://models.github.ai/inference";
-// var deploymentName = config["OpenAI:DeploymentName"] ?? "openai/gpt-5-chat";
-
-// string githubkey = config["OpenAI:Key"] ?? throw new InvalidOperationException("OpenAI:Key is not configured.");
-
-// // Create the agent configuration using OpenAI provider and GitHub models
-// //  (this is just for demonstration; in a real scenario, you'd use Azure OpenAI or another provider)
-// AIAgent agent = new OpenAIClient(
-//                     credential: new AzureKeyCredential(githubkey),
-//                     options: new OpenAIClientOptions{ Endpoint = new Uri(endpoint) })
-//     .GetChatClient(deploymentName)
-//     .AsAIAgent(instructions: instructions, name: "FroyoRecommender");
-
 var endpoint = config["AzureOpenAI:Endpoint"]
     ?? throw new InvalidOperationException("AzureOpenAI:Endpoint is not configured.");
 var deploymentName = config["AzureOpenAI:DeploymentName"] ?? "gpt-5.2-chat";
@@ -72,7 +53,7 @@ AIAgent agent = new AzureOpenAIClient(
 // Create a session to maintain context across interactions
 AgentSession session = await agent.CreateSessionAsync();
 
-Console.WriteLine("Ask FroyoRecommender anything. Type 'exit' or press Enter on an empty line to quit.\n");
+Console.WriteLine("Ask Froyo Recommender anything. Type 'exit' or press Enter on an empty line to quit.\n");
 
 while (true)
 {
@@ -82,7 +63,7 @@ while (true)
     if (string.IsNullOrWhiteSpace(input) || input.Equals("exit", StringComparison.OrdinalIgnoreCase) || input.Equals("quit", StringComparison.OrdinalIgnoreCase))
         break;
 
-    Console.Write("FroyoRecommender: ");
+    Console.Write("Froyo Recommender: ");
     await foreach (var chunk in agent.RunStreamingAsync(input, session))
     {
         Console.Write(chunk);
