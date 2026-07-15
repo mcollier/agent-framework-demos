@@ -30,8 +30,11 @@ Your available flavors include:
 - AIçaí Bowl
 """;
 
-var endpoint = config["AzureOpenAI:Endpoint"]
-    ?? throw new InvalidOperationException("AzureOpenAI:Endpoint is not configured.");
+var endpoint = config["AzureOpenAI:Endpoint"];
+if (string.IsNullOrWhiteSpace(endpoint))
+{
+    throw new InvalidOperationException("AzureOpenAI:Endpoint is not configured.");
+}
 var deploymentName = config["AzureOpenAI:DeploymentName"] ?? "gpt-5.2-chat";
 
 // Create the agent configuration
