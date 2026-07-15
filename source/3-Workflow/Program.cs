@@ -335,7 +335,6 @@ await using StreamingRun run = await InProcessExecution.RunStreamingAsync(workfl
 await run.TrySendMessageAsync(new TurnToken(emitEvents: true));
 
 string? lastExecutorId = null;
-List<ChatMessage> result = [];
 await foreach (WorkflowEvent evt in run.WatchStreamAsync())
 {
     if (evt is AgentResponseUpdateEvent e)
