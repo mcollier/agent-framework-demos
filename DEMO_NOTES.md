@@ -2,7 +2,7 @@
 
 ## 1 - Hello Agent
 - Basic MAF agent
-- Uses GitHub models - OpenAI provider
+- Uses Azure OpenAI (Azure SDK + Azure CLI auth)
 - Create a SESSION to maintain context across interactions (all in memory)
 
 What flavors do you have?
