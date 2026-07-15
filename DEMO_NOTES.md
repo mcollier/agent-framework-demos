@@ -35,7 +35,7 @@ I love a bowl of Midnight Wolverine
   - Validate against some business rules
   - JSON response (structured output)
 - Fulfillment Decision Agent
-  - Determine if an order can be fullfilled based on inventory levels, and provide a recommendation from available products.
+  - Determine if an order can be fulfilled based on inventory levels, and provide a recommendation from available products.
   - JSON response (structured output)
 - Customer Messaging Agent
   - Create a customer friendly message based on the ability to fulfill the order
